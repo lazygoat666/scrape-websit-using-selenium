@@ -1,0 +1,61 @@
+
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import pandas as pd
+
+driver = webdriver.Chrome(r"C://Users/dunan/.wdm/drivers/chromedriver/win32/105.0.5195/chromedriver.exe")
+driver.get('https://www.workopolis.com/en')
+driver.maximize_window()
+time.sleep(1)
+
+job_title = driver.find_element_by_id('query-input')
+job_title.click()
+job_title.send_keys('data analyst')
+time.sleep(1)
+
+location = driver.find_element_by_id('location-input')
+location.click()
+location.send_keys('Toronto, ON')
+time.sleep(1)
+
+search = driver.find_element_by_xpath('//*[@id="container"]/div/main/section/form/button')
+search.click()
+time.sleep(2)
+
+jobposition=[]
+jobcompany=[]
+jobsalary=[]
+joblocation=[]
+jobdescrition=[]
+
+for page in range(5):
+    job_positions = driver.find_elements(By.XPATH,"//h2[contains(@class,'SerpJob-title')]")
+    job_companys = driver.find_elements(By.XPATH,"//div[contains(@class,'SerpJob-property SerpJob-company')]")
+    job_salarys=driver.find_elements_by_css_selector("span[class$='Salary']")
+    job_locations = driver.find_elements(By.XPATH,"//span[contains(@class,'SerpJob-property SerpJob-location')]")
+    job_descritions = driver.find_elements(By.XPATH,"//div[contains(@class,'SerpJob-snippet')]")
+
+    for i in job_positions:
+        jobposition.append(i.text)
+
+    for k in job_companys:
+          jobcompany.append(k.text)
+
+    for h in job_salarys:
+          jobsalary.append(h.text)
+
+    for j in job_locations:
+        joblocation.append(j.text)
+
+    for l in job_descritions:
+        jobdescrition.append(l.text)
+
+    finallist=zip(jobposition,jobcompany,jobsalary, joblocation,jobdescrition)
+
+    print('part 1')
+
+    df=pd.DataFrame(finallist)
+
+    df.to_csv('E:/Data science work experience project/project/workopolis.csv')
+    print('part 2')
